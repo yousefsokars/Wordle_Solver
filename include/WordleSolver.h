@@ -10,14 +10,13 @@
 #include <map>
 #include <fstream>
 #include <iostream>
+#include <algorithm> // for std::max
 
-// Represents the result of a guess
 struct Feedback {
-    std::string word;   // The word user guessed
-    std::string colors; // e.g., "G-Y--"
+    std::string word; 
+    std::string colors; 
 };
 
-// Abstract Interface for Strategies
 class IGuessStrategy {
 public:
     virtual ~IGuessStrategy() = default;
@@ -26,30 +25,28 @@ public:
 
 class WordleSolver {
 private:
-    std::vector<std::string> possibleSolutions;
+    std::vector<std::string> possibleSolutions; // The words that can be the answer (word-bank)
+    // std::vector<std::string> validGuesses;   // Words allowed to guess (valid-words) - saved for later use
     IGuessStrategy* strategy;
 
-    // The Simulation Logic (The "Engine")
     std::string getFeedbackForGuess(const std::string& target, const std::string& guess) {
-        std::string generatedColors = "-----";
+        std::string generatedColors = "-----"; 
         std::map<char, int> targetFreq;
 
-        // 1. Count frequencies
         for (char c : target) targetFreq[c]++;
 
-        // 2. Green Pass
+        // Green Pass
         for (int i = 0; i < 5; ++i) {
             if (guess[i] == target[i]) {
                 generatedColors[i] = 'G';
                 targetFreq[guess[i]]--;
             }
         }
-
-        // 3. Yellow Pass
+        // Yellow Pass
         for (int i = 0; i < 5; ++i) {
             char letter = guess[i];
-            if (generatedColors[i] == 'G') continue; // Skip greens
-
+            if (generatedColors[i] == 'G') continue; 
+            
             if (targetFreq[letter] > 0) {
                 generatedColors[i] = 'Y';
                 targetFreq[letter]--;
@@ -59,9 +56,10 @@ private:
     }
 
 public:
-    WordleSolver(const std::string& filepath, IGuessStrategy* initialStrategy) {
+    // Constructor now takes just the solution path for now
+    WordleSolver(const std::string& solutionPath, IGuessStrategy* initialStrategy) {
         this->strategy = initialStrategy;
-        loadDictionary(filepath);
+        loadDictionary(solutionPath);
     }
 
     void loadDictionary(const std::string& filepath) {
@@ -73,17 +71,16 @@ public:
 
         std::string word;
         while (std::getline(file, word)) {
-            // Cleanup: remove potential commas or quotes if your CSV has them
-            std::string cleanWord = "";
-            for (char c : word) {
-                if (isalpha(c)) cleanWord += tolower(c);
-            }
-            if (cleanWord.length() == 5) {
-                possibleSolutions.push_back(cleanWord);
+            // CSVs might have \r chars on Windows, clean them
+            word.erase(std::remove(word.begin(), word.end(), '\r'), word.end());
+            
+            // Your CSVs are just plain lists, so this simple check is enough
+            if (word.length() == 5) {
+                possibleSolutions.push_back(word);
             }
         }
         file.close();
-        std::cout << "Loaded " << possibleSolutions.size() << " words.\n";
+        std::cout << "Loaded " << possibleSolutions.size() << " possible solutions.\n";
     }
 
     void filterList(const Feedback& fb) {
