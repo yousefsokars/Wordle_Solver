@@ -9,13 +9,12 @@
 int main() {
     AggressiveStrategy aggStrat;
 
-    // IMPORTANT: Point this to your word-bank.csv
-    // If running from the root folder, use "data/word-bank.csv"
+
     WordleSolver solver("data/word-bank.csv", &aggStrat);
 
     std::cout << "--- Wordle Assistant (Aggressive Mode) ---\n";
     
-    // Calculate first guess dynamically or hardcode
+
     std::string firstSuggestion = solver.suggestNext();
     std::cout << "Suggested starter: " << firstSuggestion << "\n"; 
 
