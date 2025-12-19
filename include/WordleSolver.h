@@ -2,101 +2,100 @@
 // Created by youse on 18/12/2025.
 //
 
-#ifndef INCLUDE_WORDLESOLVER_H
-#define INCLUDE_WORDLESOLVER_H
+#ifndef WORDLE_SOLVER_H
+#define WORDLE_SOLVER_H
 
 #include <string>
 #include <vector>
 #include <map>
 #include <fstream>
 #include <iostream>
-#include <algorithm> // for std::max
+#include <algorithm>
 
+//the result of a guess
 struct Feedback {
-    std::string word; 
-    std::string colors; 
+    std::string word;
+    std::string colors;
 };
 
+// abs strat
 class IGuessStrategy {
 public:
     virtual ~IGuessStrategy() = default;
-    virtual std::string pickWord(const std::vector<std::string>& candidates) = 0;
+    virtual std::string pickWord(const std::vector<std::string>& candidates,
+                                 const std::vector<std::string>& fullValidGuesses) = 0;
 };
 
 class WordleSolver {
 private:
-    std::vector<std::string> possibleSolutions; // The words that can be the answer (word-bank)
-    // std::vector<std::string> validGuesses;   // Words allowed to guess (valid-words) - saved for later use
+    std::vector<std::string> possibleSolutions;
+    std::vector<std::string> validGuesses;
     IGuessStrategy* strategy;
 
-    std::string getFeedbackForGuess(const std::string& target, const std::string& guess) {
-        std::string generatedColors = "-----"; 
+public:
+
+    static std::string simulateFeedback(const std::string& target, const std::string& guess) {
+        std::string generatedColors = "-----";
         std::map<char, int> targetFreq;
 
-        for (char c : target) targetFreq[c]++;
+        for(char c : target){targetFreq[c]++;}
 
-        // Green Pass
-        for (int i = 0; i < 5; ++i) {
-            if (guess[i] == target[i]) {
-                generatedColors[i] = 'G';
+
+        for(int i = 0; i< 5; ++i){
+            if(guess[i]== target[i]){
+                generatedColors[i]= 'G';
                 targetFreq[guess[i]]--;
             }
         }
-        // Yellow Pass
-        for (int i = 0; i < 5; ++i) {
-            char letter = guess[i];
-            if (generatedColors[i] == 'G') continue; 
-            
-            if (targetFreq[letter] > 0) {
-                generatedColors[i] = 'Y';
+        for(int i= 0; i< 5;++i){
+            char letter= guess[i];
+            if(generatedColors[i]== 'G'){continue;}
+            if(targetFreq[letter]> 0) {
+                generatedColors[i]= 'Y';
                 targetFreq[letter]--;
             }
         }
         return generatedColors;
     }
 
-public:
-    // Constructor now takes just the solution path for now
-    WordleSolver(const std::string& solutionPath, IGuessStrategy* initialStrategy) {
+    WordleSolver(const std::string& bankPath, const std::string& validPath, IGuessStrategy* initialStrategy) {
         this->strategy = initialStrategy;
-        loadDictionary(solutionPath);
+        possibleSolutions = loadFile(bankPath);
+        validGuesses = loadFile(validPath);
+
+        std::cout << "Engine Ready: "<< possibleSolutions.size()<< " solutions, "
+                  << validGuesses.size()<< " valid guesses.\n";
     }
 
-    void loadDictionary(const std::string& filepath) {
+    std::vector<std::string> loadFile(const std::string& filepath) {
+        std::vector<std::string> list;
         std::ifstream file(filepath);
-        if (!file.is_open()) {
+        if(!file.is_open()){
             std::cerr << "Error: Could not open file " << filepath << std::endl;
-            return;
+            return list;
         }
-
         std::string word;
-        while (std::getline(file, word)) {
-            // CSVs might have \r chars on Windows, clean them
+        while(std::getline(file, word)){
             word.erase(std::remove(word.begin(), word.end(), '\r'), word.end());
-            
-            // Your CSVs are just plain lists, so this simple check is enough
-            if (word.length() == 5) {
-                possibleSolutions.push_back(word);
-            }
+            if(word.length()== 5){list.push_back(word);}
         }
-        file.close();
-        std::cout << "Loaded " << possibleSolutions.size() << " possible solutions.\n";
+        return list;
     }
 
     void filterList(const Feedback& fb) {
         std::vector<std::string> nextList;
-        for (const auto& candidate : possibleSolutions) {
-            if (getFeedbackForGuess(candidate, fb.word) == fb.colors) {
+        for(const auto& candidate : possibleSolutions){
+            if(simulateFeedback(candidate, fb.word)== fb.colors){
                 nextList.push_back(candidate);
             }
         }
-        possibleSolutions = nextList;
-        std::cout << "Remaining possibilities: " << possibleSolutions.size() << "\n";
+        possibleSolutions= nextList;
+        std::cout<< "Remaining possibilities: "<< possibleSolutions.size()<< "\n";
     }
 
-    std::string suggestNext() {
-        return strategy->pickWord(possibleSolutions);
+    std::string suggestNext(){
+        return strategy->pickWord(possibleSolutions, validGuesses);
     }
 };
 
-#endif //INCLUDE_WORDLESOLVER_H
+#endif
