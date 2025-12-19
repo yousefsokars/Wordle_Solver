@@ -40,4 +40,11 @@
 # debug information files
 *.dwo
 
-cmake-build-debug/
+# Build directories
+build/
+cmake-build-*/
+out/
+
+# IDE files
+.vs/
+.idea/

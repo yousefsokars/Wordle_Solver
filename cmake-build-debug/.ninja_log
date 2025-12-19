@@ -1,9 +1,0 @@
-# ninja log v5
-0	524	7877832558574665	CMakeFiles/Wordle_Solver.dir/src/main.cpp.obj	a99145afbda34053
-531	768	7877832560985160	Wordle_Solver.exe	f61a3da0c53e99dc
-2	589	7877841628732858	CMakeFiles/Wordle_Solver.dir/src/main.cpp.obj	a99145afbda34053
-589	694	7877841629755159	Wordle_Solver.exe	f61a3da0c53e99dc
-2	469	7877845718638034	CMakeFiles/Wordle_Solver.dir/src/main.cpp.obj	a99145afbda34053
-469	578	7877845719713294	Wordle_Solver.exe	f61a3da0c53e99dc
-2	768	7878883927514498	CMakeFiles/Wordle_Solver.dir/src/main.cpp.obj	a99145afbda34053
-768	1114	7878883930952677	Wordle_Solver.exe	f61a3da0c53e99dc

@@ -1,3 +1,0 @@
-C:/Users/youse/Wordle_Solver/Wordle_Solver/cmake-build-debug/CMakeFiles/Wordle_Solver.dir
-C:/Users/youse/Wordle_Solver/Wordle_Solver/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/youse/Wordle_Solver/Wordle_Solver/cmake-build-debug/CMakeFiles/rebuild_cache.dir
