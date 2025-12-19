@@ -1,4 +1,6 @@
-🟩 Wordle Solver (C++)
+🟩🟨⬛⬛🟨
+
+Wordle Solver (C++)
 
 A high-performance command-line Wordle solver written in modern C++.
 The project focuses on algorithmic efficiency, search-space reduction, and clean software architecture, making it suitable as a systems / algorithms portfolio project.
@@ -21,7 +23,7 @@ Paradigms: Object-Oriented Design, Strategy Pattern
 
 Build System: CMake
 
-Tooling: Git (feature-branch workflow), Visual Studio / GCC
+Tooling: Git (feature-branch workflow), GCC
 
 🧠 Algorithms
 1. Aggressive Strategy (Greedy)
@@ -61,7 +63,9 @@ C++17-compatible compiler (GCC, Clang, or MSVC)
 CMake ≥ 3.15
 
 Build Instructions
+
 git clone https://github.com/yousefsokars/Wordle_Solver.git
+
 cd Wordle_Solver
 
 mkdir build
